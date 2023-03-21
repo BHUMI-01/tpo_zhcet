@@ -111,7 +111,7 @@ const AddJob = () => {
                                 fontSize: "20px",
                             }}
                         >
-                            ADD JOB OPPORTUNITY
+                            ADD EVENT
                         </MDBCol>
                     </MDBRow>
                     <hr />
