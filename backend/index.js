@@ -1,9 +1,12 @@
 const express = require("express");
+const dotenv = require("dotenv");
 const app = express();
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const Jwt = require("jsonwebtoken");
-const jwtKey = "i am lovish";
+const jwtKey = process.env.JWTKEY;
+
+dotenv.config({ path: './config.env' });
 require("./db/config");
 const Student = require("./models/students/Student");
 const EventPost = require("./models/Notification/EventPost");
@@ -11,7 +14,7 @@ const Admin = require("./models/Admin/Admin");
 const Student_Data = require("./models/students/Student_Data");
 const Jobs = require("./models/Notification/JobPost");
 const { valid } = require("joi");
-
+const PORT = process.env.PORT;
 const Images = require("./models/students/imageupload");
 // const Student_File_Uplod = require('./models/students/Student_File_Upload');
 
@@ -27,7 +30,7 @@ app.post("/register", async (req, resp) => {
     let student = await Student.findOne(req.body);
 
     if (student) {
-      resp.send({ result: "user already enrolled" });
+      return resp.send({ result: "user already enrolled" });
     } else {
       let student = new Student(req.body);
       let result = await student.save();
@@ -35,14 +38,14 @@ app.post("/register", async (req, resp) => {
       delete result.password;
       Jwt.sign({ result }, jwtKey, { expiresIn: "7h" }, (err, token) => {
         if (err) {
-          resp.send({ result: "Something is wrong!" });
+           resp.send({ result: "Something is wrong!" });
         }
-        resp.send({ result, auth: token });
+         resp.send({ result, auth: token });
       });
     }
   } catch (err) {
     console.log(err);
-    resp.send({ result: "Something is wrong!" });
+    return resp.send({ result: "Something is wrong!" });
   }
 });
 
@@ -53,15 +56,15 @@ app.post("/login", async (req, resp) => {
     if (student) {
       Jwt.sign({ student }, jwtKey, { expiresIn: "7h" }, (err, token) => {
         if (err) {
-          resp.send({ result: "Something is wrong!" });
+           resp.send({ result: "Something is wrong!" });
         }
-        resp.send({ student, auth: token });
+         resp.send({ student, auth: token });
       });
     } else {
-      resp.send({ result: "No User Found" });
+      return resp.send({ result: "No User Found" });
     }
   } else {
-    resp.send({ result: "No User Found" });
+    return resp.send({ result: "No User Found" });
   }
 });
 
@@ -288,4 +291,6 @@ app.get("/get-event-post", async (req, resp) => {
   }
 });
 
-app.listen(5000);
+app.listen(PORT, () => {
+  console.log(`server is runnig at port no ${PORT}`);
+})
