@@ -14,31 +14,55 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  useEffect(() => {
-    const auth = localStorage.getItem("token");
-    if (auth) {
-      navigate('/dashboard');
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  // useEffect(() => {
+  //   const auth = localStorage.getItem("token");
+  //   if (auth) {
+  //     navigate('/dashboard');
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [])
 
-  const handlelogin = async () => {
-    let result = await fetch("http://localhost:5000/login", {
-      method: 'post',
-      body: JSON.stringify({ email, password }),
+  const handlelogin =  (e) => {
+    e.preventDefault();
+    fetch("http://localhost:5000/login", {
+      method: "POST",
+      crossDomain: true,
       headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    result = await result.json();
-    if (result.result) {
-      alert("Please enter correct details");
-    }
-    else {
-      localStorage.setItem("student", JSON.stringify(result.student));
-      localStorage.setItem("token", JSON.stringify(result.auth));
-      // navigate('/student');
-    }
+        "Content-Type": "application/json",
+
+      },
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data, "userRegister");
+        if (data.status == "ok") {
+          // alert("login successful");
+          localStorage.setItem("student", JSON.stringify(data.data.user));
+          localStorage.setItem("token", JSON.stringify(data.data.token));
+          navigate('/dashboard');
+        }
+      });
+    // let result = await fetch("http://localhost:5000/login", {
+    //   method: 'post',
+    //   body: JSON.stringify({ email, password }),
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   }
+    // });
+    // result = await result.json();
+    // if (result.auth) {
+    //   localStorage.setItem("student", JSON.stringify(result.student));
+    //   localStorage.setItem("token", JSON.stringify(result.auth));
+
+      
+    // }
+    // else {
+    //   alert("Please enter correct details");
+    // }
   }
 
   return (
@@ -48,7 +72,7 @@ const Login = () => {
           <MDBRow>
             {/* 1st half part of the login api */}
             <MDBCol col='6' className="mb-5">
-              <form >
+              <form onSubmit={handlelogin}>
                 <h3>Sign In</h3>
                 <div className="mb-3">
                   <label>Email address</label>
@@ -88,7 +112,7 @@ const Login = () => {
                 </div>
 
                 <div className="d-grid">
-                  <button type="submit" onClick={() => handlelogin()} className="btn btn-primary">
+                  <button type="submit"  className="btn btn-primary">
                     Submit
                   </button>
                 </div>

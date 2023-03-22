@@ -6,7 +6,7 @@ const bodyParser = require("body-parser");
 const Jwt = require("jsonwebtoken");
 const jwtKey = process.env.JWTKEY;
 
-dotenv.config({ path: './config.env' });
+dotenv.config({ path: "./config.env" });
 require("./db/config");
 const Student = require("./models/students/Student");
 const EventPost = require("./models/Notification/EventPost");
@@ -17,7 +17,7 @@ const { valid } = require("joi");
 const PORT = process.env.PORT;
 const Images = require("./models/students/imageupload");
 // const Student_File_Uplod = require('./models/students/Student_File_Upload');
-
+const bcrypt = require("bcryptjs");
 // middlewares
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
@@ -25,47 +25,54 @@ app.use(express.json());
 app.use(cors());
 
 //student register and login - register
-app.post("/register", async (req, resp) => {
-  try {
-    let student = await Student.findOne(req.body);
+app.post("/register", async (req, res) => {
+  const { firstName, middleName, lastName, email, password, passwordConfirm } =
+    req.body;
 
-    if (student) {
-      return resp.send({ result: "user already enrolled" });
-    } else {
-      let student = new Student(req.body);
-      let result = await student.save();
-      result = result.toObject();
-      delete result.password;
-      Jwt.sign({ result }, jwtKey, { expiresIn: "7h" }, (err, token) => {
-        if (err) {
-           resp.send({ result: "Something is wrong!" });
-        }
-         resp.send({ result, auth: token });
-      });
+  const encryptedPassword = await bcrypt.hash(password, 10);
+  try {
+    const oldUser = await Student.findOne({ email });
+
+    if (oldUser) {
+      return res.json({ error: "User Exists" });
     }
-  } catch (err) {
-    console.log(err);
-    return resp.send({ result: "Something is wrong!" });
+    const student =await Student.create({
+      firstName,
+      middleName,
+      lastName,
+      email,
+      password:encryptedPassword
+
+    });
+    const token = Jwt.sign({ student }, process.env.JWTKEY, {
+      expiresIn: "7h",
+    });
+    res.send({ status: "ok", data:{student, token} });
+  } catch (error) {
+    res.send({ status: "error" });
   }
 });
 
 // student register and login - login
 app.post("/login", async (req, resp) => {
-  if (req.body.password && req.body.email) {
-    let student = await Student.findOne(req.body).select("-password");
-    if (student) {
-      Jwt.sign({ student }, jwtKey, { expiresIn: "7h" }, (err, token) => {
-        if (err) {
-           resp.send({ result: "Something is wrong!" });
-        }
-         resp.send({ student, auth: token });
-      });
-    } else {
-      return resp.send({ result: "No User Found" });
-    }
-  } else {
-    return resp.send({ result: "No User Found" });
+  const { email, password } = req.body;
+
+  const user = await Student.findOne({ email });
+  if (!user) {
+    return resp.json({ error: "User Not found" });
   }
+  if (await bcrypt.compare(password, user.password)) {
+    const token = Jwt.sign({ email: user.email }, process.env.JWTKEY, {
+      expiresIn: "15h",
+    });
+
+    if (resp.status(201)) {
+      return resp.json({ status: "ok", data: {user,token }});
+    } else {
+      return resp.json({ error: "error" });
+    }
+  }
+  resp.json({ status: "error", error: "InvAlid Password" });
 });
 
 //company register and login - register
@@ -120,6 +127,21 @@ app.post("/comp-login", async (req, resp) => {
   }
 });
 
+function verifyToken(req, resp, next) {
+  let token = req.headers["authorization"];
+  if (token) {
+    Jwt.verify(token, jwtKey, (err, valid) => {
+      if (err) {
+        resp.status(401).send({ result: "Please enter a valid token!" });
+      } else {
+        next();
+      }
+    });
+  } else {
+    resp.status(403).send({ result: "Please enter a token!" });
+  }
+}
+
 //Experimental nested scheme
 app.post("/add-data", verifyToken, async (req, resp) => {
   let student = new Student_Data(req.body);
@@ -155,21 +177,6 @@ app.get("/add-data-qualify/:id", verifyToken, async (req, resp) => {
     resp.send({ result: "No User Found" });
   }
 });
-
-function verifyToken(req, resp, next) {
-  let token = req.headers["authorization"];
-  if (token) {
-    Jwt.verify(token, jwtKey, (err, valid) => {
-      if (err) {
-        resp.status(401).send({ result: "Please enter a valid token!" });
-      } else {
-        next();
-      }
-    });
-  } else {
-    resp.status(403).send({ result: "Please enter a token!" });
-  }
-}
 
 app.post("/upload-image", verifyToken, async (req, res) => {
   const { studentId, stdupload } = req.body;
@@ -273,7 +280,7 @@ app.put("/update-job/:id", verifyToken, async (req, resp) => {
   resp.send(result);
 });
 
-// api for the event post 
+// api for the event post
 // post request api
 app.post("/add-event-post", async (req, resp) => {
   let posts = new EventPost(req.body);
@@ -284,13 +291,12 @@ app.post("/add-event-post", async (req, resp) => {
 app.get("/get-event-post", async (req, resp) => {
   const posts = await EventPost.find();
   if (posts) {
-    resp.send(posts)
-  }
-  else {
-    resp.send({ result: "No Events Found!" })
+    resp.send(posts);
+  } else {
+    resp.send({ result: "No Events Found!" });
   }
 });
 
 app.listen(PORT, () => {
   console.log(`server is runnig at port no ${PORT}`);
-})
+});

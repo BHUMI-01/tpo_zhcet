@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, redirect } from "react-router-dom";
 import {
   MDBContainer,
   MDBRow,
@@ -20,31 +20,44 @@ const Stdregister = () => {
   useEffect(() => {
     const auth = localStorage.getItem("token");
     if (auth) {
-      navigate('/onetimeform/addstdprofile');
+           navigate('/onetimeform/addstdprofile');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const collectData = async () => {
-    let result = await fetch("http://localhost:5000/register", {
-      method: 'post',
-      body: JSON.stringify({ firstName, middleName, lastName, email, password, passwordConfirm }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    result = await result.json();
-    if (result.result === "user already enrolled") {
-      alert("User Already Registered");
-    }
-    else if (result.result === "Something is wrong!") {
-      alert("Something is wrong! Please try it again!!");
-    }
-    else {
-      localStorage.setItem("student", JSON.stringify(result.result));
-      localStorage.setItem("token", JSON.stringify(result.auth));
-      // navigate('/student/addstdprofile');
-    }
+  const collectData =  () => {
+
+
+
+      fetch("http://localhost:5000/register", {
+        method: "POST",
+        crossDomain: true,
+        headers: {
+          "Content-Type": "application/json",
+
+        },
+        body: JSON.stringify({
+          firstName,
+      middleName,
+      lastName,
+      email,
+      password,
+      passwordConfirm
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data, "userRegister");
+          if (data.status == "ok") {
+          
+            localStorage.setItem("student", JSON.stringify(data.data.student));
+      localStorage.setItem("token", JSON.stringify(data.data.token));
+      alert("Registration Successful");
+      // navigate('/onetimeform/addstdprofile');
+          } else {
+            alert("Something went wrong");
+          }
+        });
   }
 
   return (
@@ -59,7 +72,7 @@ const Stdregister = () => {
               lg="6"
               className="order-2 order-lg-1 d-flex flex-column align-items-center"
             >
-              <form>
+              <form >
                 <h3>Sign Up</h3>
                 <div className="mb-3">
                   <label>First name</label>
@@ -131,7 +144,7 @@ const Stdregister = () => {
                 {/* submit button of the register page */}
               <div className="d-grid">
                 <button type="submit" className="btn btn-primary"
-                  onClick={() => collectData()}>
+                  onClick={collectData}>
                   Sign Up
                 </button>
               </div>
