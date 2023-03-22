@@ -8,7 +8,7 @@ import {
   MDBCardBody,
   MDBCardImage,
 } from "mdb-react-ui-kit";
-
+import Nabvar from '../navbar/Navbar';
 const Stdregister = () => {
   const [firstName, setFirstName] = useState("");
   const [middleName, setMiddleName] = useState("");
@@ -17,16 +17,16 @@ const Stdregister = () => {
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const navigate = useNavigate();
-  useEffect(() => {
-    const auth = localStorage.getItem("token");
-    if (auth) {
-           navigate('/onetimeform/addstdprofile');
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  // useEffect(() => {
+  //   const auth = localStorage.getItem("token");
+  //   if (auth) {
+  //          redirect('/onetimeform/addstdprofile');
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [])
 
-  const collectData =  () => {
-
+  const collectData =  (e) => {
+    e.preventDefault();
 
 
       fetch("http://localhost:5000/register", {
@@ -53,7 +53,7 @@ const Stdregister = () => {
             localStorage.setItem("student", JSON.stringify(data.data.student));
       localStorage.setItem("token", JSON.stringify(data.data.token));
       alert("Registration Successful");
-      // navigate('/onetimeform/addstdprofile');
+      navigate('/onetimeform/addstdprofile');
           } else {
             alert("Something went wrong");
           }
@@ -61,6 +61,8 @@ const Stdregister = () => {
   }
 
   return (
+    <>
+    <Nabvar/>
     <MDBContainer fluid>
       <MDBCard className="text-black m-5" style={{ borderRadius: "25px" }}>
         <MDBCardBody>
@@ -72,7 +74,7 @@ const Stdregister = () => {
               lg="6"
               className="order-2 order-lg-1 d-flex flex-column align-items-center"
             >
-              <form >
+              <form onSubmit={collectData}>
                 <h3>Sign Up</h3>
                 <div className="mb-3">
                   <label>First name</label>
@@ -144,7 +146,7 @@ const Stdregister = () => {
                 {/* submit button of the register page */}
               <div className="d-grid">
                 <button type="submit" className="btn btn-primary"
-                  onClick={collectData}>
+                  >
                   Sign Up
                 </button>
               </div>
@@ -168,7 +170,7 @@ const Stdregister = () => {
           </MDBRow>
         </MDBCardBody>
       </MDBCard>
-    </MDBContainer>
+    </MDBContainer></>
   );
 }
 

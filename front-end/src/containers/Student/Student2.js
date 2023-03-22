@@ -7,7 +7,7 @@ import {
     MDBCardBody
 } from 'mdb-react-ui-kit';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
-
+import Nabvar from '../../components/navbar/Navbar';
 function Student2() {
     const authorize = JSON.parse(localStorage.getItem("token"));
     const navigate = useNavigate();
@@ -51,6 +51,8 @@ function Student2() {
     }
 
     return (
+        <>
+        <Nabvar/>
         <MDBRow>
             <MDBCol>
                 <MDBCard style={{ borderRadius: "0px" }}>
@@ -95,6 +97,7 @@ function Student2() {
                 </MDBCard>
             </MDBCol>
         </MDBRow>
+        </>
     )
 }
 

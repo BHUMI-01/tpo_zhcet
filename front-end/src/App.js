@@ -42,7 +42,7 @@ import StudentDashboard from './containers/Page';
 function App() {
   return (
     <div>
-      <Nabvar />
+      {/* <Nabvar /> */}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/register" element={<RegisterScr />} />

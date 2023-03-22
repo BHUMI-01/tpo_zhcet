@@ -5,7 +5,7 @@ import {
 } from 'mdb-react-ui-kit';
 import Side from '../components/Sidebar';
 import { useNavigate } from 'react-router-dom';
-
+import Nabvar from '../components/navbar/Navbar';
 const Page = () => {
   const authorize = JSON.parse(localStorage.getItem("token"));
   console.log("working starts...");
@@ -30,8 +30,10 @@ const Page = () => {
     }
   };
 
+
   return (
     <div>
+      <Nabvar/>
       <MDBRow>
         <MDBCol md={2}>
           <Side />

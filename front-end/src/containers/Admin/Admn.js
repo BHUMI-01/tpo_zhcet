@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminPanel from '../../components/Admin/Admin';
-
+import Nabvar from '..//../components/navbar/Navbar';
 const Admn = () => {
   const navigate = useNavigate();
     useEffect(() => {
@@ -11,9 +11,12 @@ const Admn = () => {
         }
     }, [])
   return (
+    <><Nabvar/>
+
     <div>
+      
       <AdminPanel/>
-    </div>
+    </div>    </>
   )
 }
 
