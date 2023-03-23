@@ -35,18 +35,17 @@ app.post("/register", async (req, res) => {
     if (oldUser) {
       return res.json({ error: "User Exists" });
     }
-    const student =await Student.create({
+    const student = await Student.create({
       firstName,
       middleName,
       lastName,
       email,
-      password:encryptedPassword
-
+      password: encryptedPassword,
     });
     const token = Jwt.sign({ student }, process.env.JWTKEY, {
       expiresIn: "7h",
     });
-    res.send({ status: "ok", data:{student, token} });
+    res.send({ status: "ok", data: { student, token } });
   } catch (error) {
     res.send({ status: "error" });
   }
@@ -66,7 +65,7 @@ app.post("/login", async (req, resp) => {
     });
 
     if (resp.status(201)) {
-      return resp.json({ status: "ok", data: {user,token }});
+      return resp.json({ status: "ok", data: { user, token } });
     } else {
       return resp.json({ error: "error" });
     }

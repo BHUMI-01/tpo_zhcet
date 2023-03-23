@@ -8,7 +8,7 @@ import {
   MDBCardBody,
   MDBCardImage,
 } from "mdb-react-ui-kit";
-
+import Nabvar from '../navbar/Navbar';
 const Compregister = () => {
   const [username, setFirstName] = useState("");
   const [email, setEmail] = useState("");
