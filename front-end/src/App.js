@@ -1,13 +1,16 @@
 import './App.css';
 import { Route, Routes, UNSAFE_enhanceManualRouteObjects } from 'react-router-dom';
-import Nabvar from './components/navbar/Navbar';
 import Home from "./containers/Home";
-import LoginScr from "./containers/LoginScr";
-import StudentLoginScr from "./components/Login/stdLogin";
-import RecruiterLoginScr from "./components/Login/compLogin";
-import RegisterScr from './containers/RegisterScr';
-import StudentRegister from './components/Register/stdregister';
-import RecruiterRegister from './components/Register/compregister';
+// import for login
+import LoginScr from "./containers/Login/LoginScr";
+import StudentLoginScr from "./containers/Login/LoginStdSrc";
+import RecruiterLoginScr from "./containers/Login/LoginCompSrc";
+//import for register
+import RegisterScr from './containers/Register/RegisterScr';
+import StudentRegister from './containers/Register/RegisterStdSrc';
+import RecruiterRegister from './containers/Register/RegisterCompSrc';
+// imports for the student profile
+import StudentDashboard from './containers/Page';
 import StudentDash from './containers/Student/Student';
 import StudentDash2 from './containers/Student/Student2';
 import AddStdUpload from './containers/Student/AddUpload';
@@ -20,13 +23,13 @@ import StudentQualify from './containers/Student/Qualification';
 import EditStudentQualify from './containers/Student/EditQualify';
 import AddStudentQualify from './containers/Student/AddQualify';
 import EditTempAddress from './containers/Student/EditTempAddress';
-
+// imports for the onetime form for the student profile
 import AddStudentProfile from './containers/Student/AddProfile';
 import AddPerStudentAddress from './containers/Student/AddPerAddress';
 import AddTempAddress from './containers/Student/AddTempAddress';
 import AddStudentEducat from './containers/Student/AddEducat';
 import Reviewform from './containers/Student/ReviewForm';
-
+// imports for the admin profile
 import Admin from './containers/Admin/Admn';
 import ManageStd from './containers/Admin/MangStudent';
 import AddAdmin from './containers/Admin/Addadmin';
@@ -35,9 +38,9 @@ import ManageAdmin from './containers/Admin/MangAdmin';
 import Notify from './containers/Admin/Notification';
 import AddJob from './containers/Admin/Addjob';
 import AddEvent from './containers/Admin/AddEventPost';
-
+// imports for the recruiter profile
 import Recruiter from './containers/Recruiter';
-import StudentDashboard from './containers/Page';
+
 
 function App() {
   return (

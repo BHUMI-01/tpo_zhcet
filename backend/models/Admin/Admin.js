@@ -34,24 +34,24 @@ const adminSchema = new mongoose.Schema({
     }
   });
   
-  // Create a model for the admin
-//   const Admin = mongoose.model('Admin', adminSchema);
+  //Create a model for the admin
+  // const Admin = mongoose.model('Admin', adminSchema);
   
-//   // Example of how to create an admin in the model
-//   const newAdmin = new Admin({
-//     username: 'admin',
-//     password: 'admin',
-//     email: 'admin@gmail.com',
-//     role: 'superadmin'
-//   });
+  // // Example of how to create an admin in the model
+  // const newAdmin = new Admin({
+  //   username: 'admin',
+  //   password: 'admin',
+  //   email: 'admin@gmail.com',
+  //   role: 'admin'
+  // });
   
-//   newAdmin.save((err, admin) => {
-//     if (err) {
-//       console.log(err);
-//     } else {
-//       console.log('Admin created:', admin);
-//     }
-//   });
+  // newAdmin.save((err, admin) => {
+  //   if (err) {
+  //     console.log(err);
+  //   } else {
+  //     console.log('Admin created:', admin);
+  //   }
+  // });
 
   module.exports = mongoose.model("admins", adminSchema);
   

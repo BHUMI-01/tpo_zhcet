@@ -16,8 +16,8 @@ const Jobs = require("./models/Notification/JobPost");
 const { valid } = require("joi");
 const PORT = process.env.PORT;
 const Images = require("./models/students/imageupload");
-// const Student_File_Uplod = require('./models/students/Student_File_Upload');
 const bcrypt = require("bcryptjs");
+
 // middlewares
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
@@ -26,8 +26,7 @@ app.use(cors());
 
 //student register and login - register
 app.post("/register", async (req, res) => {
-  const { firstName, middleName, lastName, email, password, passwordConfirm } =
-    req.body;
+  const { firstName, middleName, lastName, email, password, passwordConfirm } = req.body;
 
   const encryptedPassword = await bcrypt.hash(password, 10);
   try {
@@ -76,61 +75,56 @@ app.post("/login", async (req, resp) => {
 });
 
 //company register and login - register
-app.post("/comp-register", async (req, resp) => {
-  if (req.body.password && req.body.email) {
-    let comp = await Admin.findOne(req.body);
+app.post("/comp-register", async (req, res) => {
+  const { username, email, password } = req.body;
 
-    if (comp) {
-      resp.send({ result: "user already enrolled" });
-    } else {
-      let comp = new Admin(req.body);
-      let result = await comp.save();
-      result = result.toObject();
-      delete result.password;
-      Jwt.sign({ result }, jwtKey, { expiresIn: "7h" }, (err, token) => {
-        if (err) {
-          resp.send({ result: "Something is wrong!" });
-        }
-        resp.send({ result, auth: token });
-      });
+  const encryptedPassword = await bcrypt.hash(password, 10);
+  try {
+    const oldUser = await Admin.findOne({ email });
+
+    if (oldUser) {
+      return res.json({ error: "User Exists" });
     }
-  } else {
-    let comp = new Admin(req.body);
-    let result = await comp.save();
-    result = result.toObject();
-    delete result.password;
-    Jwt.sign({ result }, jwtKey, { expiresIn: "7h" }, (err, token) => {
-      if (err) {
-        resp.send({ result: "Something is wrong!" });
-      }
-      resp.send({ result, auth: token });
+    const company =await Admin.create({
+      username,
+      email,
+      password:encryptedPassword,
     });
+    const token = Jwt.sign({ company }, process.env.JWTKEY, {
+      expiresIn: "7h",
+    });
+    res.send({ status: "ok", data:{company, token} });
+  } catch (error) {
+    res.send({ status: "error" });
   }
 });
 
-//company register and login - login
+// cmpany register and login - login
 app.post("/comp-login", async (req, resp) => {
-  if (req.body.password && req.body.email) {
-    let recruiter = await Admin.findOne(req.body).select("-password");
-    if (recruiter) {
-      Jwt.sign({ recruiter }, jwtKey, { expiresIn: "7h" }, (err, token) => {
-        if (err) {
-          resp.send({ result: "Something is wrong!" });
-        }
-        resp.send({ recruiter, auth: token });
-      });
-    } else {
-      resp.send({ result: "No User Found" });
-    }
-  } else {
-    resp.send({ result: "No User Found" });
+  const { email, password } = req.body;
+
+  const user = await Admin.findOne({ email });
+  if (!user) {
+    return resp.json({ error: "User Not found" });
   }
+  if (await bcrypt.compare(password, user.password)) {
+    const token = Jwt.sign({ email: user.email }, process.env.JWTKEY, {
+      expiresIn: "15h",
+    });
+
+    if (resp.status(201)) {
+      return resp.json({ status: "ok", data: {user,token }});
+    } else {
+      return resp.json({ error: "error" });
+    }
+  }
+  resp.json({ status: "error", error: "InvAlid Password" });
 });
 
 function verifyToken(req, resp, next) {
   let token = req.headers["authorization"];
   if (token) {
-    Jwt.verify(token, jwtKey, (err, valid) => {
+    Jwt.verify(token, process.env.JWTKEY, (err, valid) => {
       if (err) {
         resp.status(401).send({ result: "Please enter a valid token!" });
       } else {

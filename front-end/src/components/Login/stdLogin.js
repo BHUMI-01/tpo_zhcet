@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   MDBContainer,
@@ -9,20 +9,12 @@ import {
 }
   from 'mdb-react-ui-kit';
 import './login.css';
-import Nabvar from '../navbar/Navbar';
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  // useEffect(() => {
-  //   const auth = localStorage.getItem("token");
-  //   if (auth) {
-  //     navigate('/dashboard');
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [])
 
-  const handlelogin =  (e) => {
+  const handlelogin = (e) => {
     e.preventDefault();
     fetch("http://localhost:5000/login", {
       method: "POST",
@@ -40,108 +32,91 @@ const Login = () => {
       .then((data) => {
         console.log(data, "userRegister");
         if (data.status == "ok") {
-          // alert("login successful");
+          alert("login successful");
           localStorage.setItem("student", JSON.stringify(data.data.user));
           localStorage.setItem("token", JSON.stringify(data.data.token));
           navigate('/dashboard');
         }
+        else{alert("something is wrong!");}
       });
-    // let result = await fetch("http://localhost:5000/login", {
-    //   method: 'post',
-    //   body: JSON.stringify({ email, password }),
-    //   headers: {
-    //     'Content-Type': 'application/json'
-    //   }
-    // });
-    // result = await result.json();
-    // if (result.auth) {
-    //   localStorage.setItem("student", JSON.stringify(result.student));
-    //   localStorage.setItem("token", JSON.stringify(result.auth));
-
-      
-    // }
-    // else {
-    //   alert("Please enter correct details");
-    // }
   }
 
   return (
     <>
-    <Nabvar/>
-    <MDBContainer className="my-5 gradient-form">
-      <MDBCard className='text-black m-5' style={{ borderRadius: '25px' }}>
-        <MDBCardBody>
-          <MDBRow>
-            {/* 1st half part of the login api */}
-            <MDBCol col='6' className="mb-5">
-              <form onSubmit={handlelogin}>
-                <h3>Sign In</h3>
-                <div className="mb-3">
-                  <label>Email address</label>
-                  <input
-                    type="email"
-                    className="form-control"
-                    placeholder="Enter email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
-
-                <div className="mb-3">
-                  <label>Password</label>
-                  <input
-                    type="password"
-                    className="form-control"
-                    placeholder="Enter password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                </div>
-
-                <div className="mb-3">
-                  <div className="custom-control custom-checkbox">
+      <MDBContainer className="my-5 gradient-form">
+        <MDBCard className='text-black m-5' style={{ borderRadius: '25px' }}>
+          <MDBCardBody>
+            <MDBRow>
+              {/* 1st half part of the login api */}
+              <MDBCol col='6' className="mb-5">
+                <form onSubmit={handlelogin}>
+                  <h3>Sign In</h3>
+                  <div className="mb-3">
+                    <label>Email address</label>
                     <input
-                      type="checkbox"
-                      className="custom-control-input"
-                      id="customCheck1"
+                      type="email"
+                      className="form-control"
+                      placeholder="Enter email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
                     />
-                    <label className="custom-control-label" htmlFor="customCheck1">
-                      Remember me
-                    </label>
+                  </div>
+
+                  <div className="mb-3">
+                    <label>Password</label>
+                    <input
+                      type="password"
+                      className="form-control"
+                      placeholder="Enter password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div className="mb-3">
+                    <div className="custom-control custom-checkbox">
+                      <input
+                        type="checkbox"
+                        className="custom-control-input"
+                        id="customCheck1"
+                      />
+                      <label className="custom-control-label" htmlFor="customCheck1">
+                        Remember me
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="d-grid">
+                    <button type="submit" className="btn btn-primary">
+                      Submit
+                    </button>
+                  </div>
+                  <p className="forgot-password text-right">
+                    <a href="/stdregister">Sign Up</a>
+                  </p>
+                </form>
+              </MDBCol>
+              {/* 1st half part end here */}
+
+
+              {/* 2nd half part of the login api */}
+              <MDBCol col='6' className="mb-5">
+                <div className="d-flex flex-column  justify-content-center gradient-custom-2 h-100 mb-4">
+                  <div className="text-white px-3 py-4 p-md-5 mx-md-4">
+                    <h4 className="mb-4">Training and Placement Portal For Students</h4>
+                    <p className="small mb-0">Students can login here and providing their personal details,
+                      academic qualifications and other details related to the placement.
+                    </p>
                   </div>
                 </div>
-
-                <div className="d-grid">
-                  <button type="submit"  className="btn btn-primary">
-                    Submit
-                  </button>
-                </div>
-                <p className="forgot-password text-right">
-                  <a href="/stdregister">Sign Up</a>
-                </p>
-              </form>
-            </MDBCol>
-            {/* 1st half part end here */}
-
-
-            {/* 2nd half part of the login api */}
-            <MDBCol col='6' className="mb-5">
-              <div className="d-flex flex-column  justify-content-center gradient-custom-2 h-100 mb-4">
-                <div className="text-white px-3 py-4 p-md-5 mx-md-4">
-                  <h4 className="mb-4">Training and Placement Portal For Students</h4>
-                  <p className="small mb-0">Students can login here and providing their personal details,
-                    academic qualifications and other details related to the placement.
-                  </p>
-                </div>
-              </div>
-            </MDBCol>
-            {/* 2nd half part end here */}
-          </MDBRow>
-        </MDBCardBody>
-      </MDBCard>
-    </MDBContainer>
+              </MDBCol>
+              {/* 2nd half part end here */}
+            </MDBRow>
+          </MDBCardBody>
+        </MDBCard>
+      </MDBContainer>
     </>
   );
 }

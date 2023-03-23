@@ -8,7 +8,6 @@ import { useNavigate } from 'react-router-dom';
 import Nabvar from '../components/navbar/Navbar';
 const Page = () => {
   const authorize = JSON.parse(localStorage.getItem("token"));
-  console.log("working starts...");
   const [data, setData] = useState([]);
   const navigate = useNavigate();
   useEffect(() => {

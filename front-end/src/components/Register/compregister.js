@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   MDBContainer,
@@ -14,35 +14,38 @@ const Compregister = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  useEffect(() => {
-    const auth = localStorage.getItem("token");
-    if (auth) {
-      navigate('/')
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  })
 
-  const collectData = async () => {
-    let result = await fetch("http://localhost:5000/comp-register", {
-      method: 'post',
-      body: JSON.stringify({ username, email, password }),
+  const collectData = (e) => {
+    e.preventDefault();
+
+    fetch("http://localhost:5000/comp-register", {
+      method: "POST",
+      crossDomain: true,
       headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    result = await result.json();
-    if (result.result === "user already enrolled") {
-      alert("User Already Registered");
-    }
-    else if (result.result === "Something is wrong!") {
-      alert("Something is wrong! Please try it again!!");
-    }
-    else {
-      localStorage.setItem("recruiter", JSON.stringify(result.result));
-      localStorage.setItem("token", JSON.stringify(result.auth));
-      // navigate('/student/addstdprofile');
-    }
+        "Content-Type": "application/json",
+
+      },
+      body: JSON.stringify({
+        username,
+        email,
+        password
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data, "userRegister");
+        if (data.status == "ok") {
+
+          localStorage.setItem("recruiter", JSON.stringify(data.data.company));
+          localStorage.setItem("token", JSON.stringify(data.data.token));
+          alert("Registration Successful");
+          navigate('/onetimeform/addstdprofile');
+        } else {
+          alert("Something went wrong");
+        }
+      });
   }
+
 
   return (
     <MDBContainer fluid>
@@ -54,7 +57,7 @@ const Compregister = () => {
               lg="6"
               className="order-2 order-lg-1 d-flex flex-column align-items-center"
             >
-              <form>
+              <form onSubmit={collectData}>
                 <h3>Sign Up</h3>
 
                 <div className="mb-3">
@@ -95,7 +98,7 @@ const Compregister = () => {
 
                 <div className="d-grid">
                   <button type="submit" className="btn btn-primary"
-                    onClick={() => collectData()}>
+                    >
                     Sign Up
                   </button>
                 </div>
