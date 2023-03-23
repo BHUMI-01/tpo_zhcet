@@ -36,18 +36,17 @@ app.post("/register", async (req, res) => {
     if (oldUser) {
       return res.json({ error: "User Exists" });
     }
-    const student =await Student.create({
+    const student = await Student.create({
       firstName,
       middleName,
       lastName,
       email,
-      password:encryptedPassword
-
+      password: encryptedPassword,
     });
     const token = Jwt.sign({ student }, process.env.JWTKEY, {
       expiresIn: "7h",
     });
-    res.send({ status: "ok", data:{student, token} });
+    res.send({ status: "ok", data: { student, token } });
   } catch (error) {
     res.send({ status: "error" });
   }
@@ -67,7 +66,7 @@ app.post("/login", async (req, resp) => {
     });
 
     if (resp.status(201)) {
-      return resp.json({ status: "ok", data: {user,token }});
+      return resp.json({ status: "ok", data: { user, token } });
     } else {
       return resp.json({ error: "error" });
     }
@@ -77,60 +76,57 @@ app.post("/login", async (req, resp) => {
 
 //company register and login - register
 app.post("/comp-register", async (req, resp) => {
-  if (req.body.password && req.body.email) {
-    let comp = await Admin.findOne(req.body);
 
-    if (comp) {
-      resp.send({ result: "user already enrolled" });
-    } else {
-      let comp = new Admin(req.body);
-      let result = await comp.save();
-      result = result.toObject();
-      delete result.password;
-      Jwt.sign({ result }, jwtKey, { expiresIn: "7h" }, (err, token) => {
-        if (err) {
-          resp.send({ result: "Something is wrong!" });
-        }
-        resp.send({ result, auth: token });
-      });
-    }
-  } else {
-    let comp = new Admin(req.body);
-    let result = await comp.save();
-    result = result.toObject();
-    delete result.password;
-    Jwt.sign({ result }, jwtKey, { expiresIn: "7h" }, (err, token) => {
-      if (err) {
-        resp.send({ result: "Something is wrong!" });
+    const { username, email, password } = req.body;
+
+    const encryptedPassword = await bcrypt.hash(password, 10);
+    try {
+      const oldUser = await Admin.findOne({ email });
+
+      if (oldUser) {
+        return resp.json({ error: "User Exists" });
       }
-      resp.send({ result, auth: token });
-    });
-  }
+      const recruiter = await Admin.create({
+        username,
+        email,
+        password: encryptedPassword,
+      });
+      const token = Jwt.sign({ recruiter }, process.env.JWTKEY, {
+        expiresIn: "7h",
+      });
+      resp.send({ status: "ok", data: { recruiter, token } });
+    } catch (error) {
+      resp.send({ status: "error" });
+    }
+  
 });
 
 //company register and login - login
 app.post("/comp-login", async (req, resp) => {
-  if (req.body.password && req.body.email) {
-    let recruiter = await Admin.findOne(req.body).select("-password");
-    if (recruiter) {
-      Jwt.sign({ recruiter }, jwtKey, { expiresIn: "7h" }, (err, token) => {
-        if (err) {
-          resp.send({ result: "Something is wrong!" });
-        }
-        resp.send({ recruiter, auth: token });
-      });
-    } else {
-      resp.send({ result: "No User Found" });
-    }
-  } else {
-    resp.send({ result: "No User Found" });
+  const { email, password } = req.body;
+
+  const recruiter = await Admin.findOne({ email });
+  if (!recruiter) {
+    return resp.json({ error: "User Not found" });
   }
+  if (await bcrypt.compare(password, recruiter.password)) {
+    const token = Jwt.sign({ email: recruiter.email }, process.env.JWTKEY, {
+      expiresIn: "15h",
+    });
+
+    if (resp.status(201)) {
+      return resp.json({ status: "ok", data: { recruiter, token } });
+    } else {
+      return resp.json({ error: "error" });
+    }
+  }
+  resp.json({ status: "error", error: "InvAlid Password" });
 });
 
 function verifyToken(req, resp, next) {
   let token = req.headers["authorization"];
   if (token) {
-    Jwt.verify(token, jwtKey, (err, valid) => {
+    Jwt.verify(token, process.env.JWTKEY, (err, valid) => {
       if (err) {
         resp.status(401).send({ result: "Please enter a valid token!" });
       } else {

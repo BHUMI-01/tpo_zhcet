@@ -1,8 +1,8 @@
 import React from 'react'
-
+import Nabvar from '../components/navbar/Navbar';
 const Recruiter = () => {
   return (
-    <div>
+    <div><Nabvar/>
       hello recruiter
     </div>
   )
