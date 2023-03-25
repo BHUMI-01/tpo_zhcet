@@ -39,8 +39,11 @@ import Notify from './containers/Admin/Notification';
 import AddJob from './containers/Admin/Addjob';
 import AddEvent from './containers/Admin/AddEventPost';
 // imports for the recruiter profile
-import Recruiter from './containers/Recruiter';
-
+import Recruiter from './containers/Recruiter/Recruiter';
+import JOB from './containers/Recruiter/Job';
+import EVENT from './containers/Recruiter/Event';
+import DashRecr from './containers/Recruiter/Dashboard';
+import SendMail from './containers/Recruiter/Email';
 
 function App() {
   return (
@@ -86,7 +89,12 @@ function App() {
           <Route path="addJob" element={<AddJob />} />
           <Route path="addEvent" element={<AddEvent />} />
         </Route>
-        <Route path="/recruiter" element={<Recruiter />} />
+        <Route path="/recruiter" element={<Recruiter />}>
+          <Route path="addJOB" element={<JOB />} />
+          <Route path="addEVENT" element={<EVENT />} />
+          <Route path="dashrecruiter" element={<DashRecr />} />
+          <Route path="sendmail" element={<SendMail />} />
+        </Route>
 
       </Routes>
     </div>

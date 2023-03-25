@@ -9,7 +9,6 @@ import {
 }
   from 'mdb-react-ui-kit';
 import './login.css';
-import Nabvar from '../navbar/Navbar';
 const CompLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -42,7 +41,6 @@ const CompLogin = () => {
   }
 
   return (<>
-    <Nabvar/>
     <MDBContainer className="my-5 gradient-form">
       <MDBCard className='text-black m-5' style={{ borderRadius: '25px' }}>
         <MDBCardBody>

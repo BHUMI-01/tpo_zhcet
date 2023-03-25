@@ -39,7 +39,7 @@ const Compregister = () => {
           localStorage.setItem("recruiter", JSON.stringify(data.data.company));
           localStorage.setItem("token", JSON.stringify(data.data.token));
           alert("Registration Successful");
-          navigate('/onetimeform/addstdprofile');
+          navigate('/');
         } else {
           alert("Something went wrong");
         }
