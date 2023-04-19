@@ -16,7 +16,7 @@ const Login = () => {
 
   const handlelogin = (e) => {
     e.preventDefault();
-    fetch(`${API_URL}/login`, {
+    fetch(`https://jocular-melba-046548.netlify.app/login`, {
       method: "POST",
       crossDomain: true,
       headers: {
