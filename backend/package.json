@@ -20,6 +20,7 @@
     "mongoose-unique-validator": "^3.1.0",
     "nodemon": "^2.0.21",
     "react-file-base64": "^1.0.3",
+    "serverless-http": "^3.2.0",
     "validator": "^13.9.0"
   }
 }
