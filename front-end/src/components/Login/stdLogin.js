@@ -16,7 +16,7 @@ const Login = () => {
 
   const handlelogin = (e) => {
     e.preventDefault();
-    fetch("http://192.168.29.21:5000/login", {
+    fetch(`${API_URL}/login`, {
       method: "POST",
       crossDomain: true,
       headers: {
