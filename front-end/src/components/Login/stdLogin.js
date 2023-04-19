@@ -16,7 +16,7 @@ const Login = () => {
 
   const handlelogin = (e) => {
     e.preventDefault();
-    fetch(`https://jocular-melba-046548.netlify.app/login`, {
+    fetch(`https://mernbackend-2bxw.onrender.com/login`, {
       method: "POST",
       crossDomain: true,
       headers: {

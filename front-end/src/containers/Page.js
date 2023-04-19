@@ -17,7 +17,7 @@ const Page = () => {
   const getData = async () => {
     if (authorize) {
       const idd = JSON.parse(localStorage.getItem("student"))._id;
-      let result = await fetch(`http://localhost:5000/add-data/${idd}`, {
+      let result = await fetch(`https://mernbackend-2bxw.onrender.com/add-data/${idd}`, {
         headers: {
           authorization: JSON.parse(localStorage.getItem("token")),
         },
