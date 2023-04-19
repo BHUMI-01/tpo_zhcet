@@ -291,8 +291,8 @@ app.get("/get-event-post", async (req, resp) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`server is runnig at port no ${PORT}`);
-});
+// app.listen(PORT, () => {
+//   console.log(`server is runnig at port no ${PORT}`);
+// });
 
 module.exports.handler = serverless(app);
